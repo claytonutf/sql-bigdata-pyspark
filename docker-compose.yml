@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Servidor Web Apache com PHP
+  web:
+    image: php:8.2-apache
+    container_name: xampp_web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./www:/var/www/html
+      - ./apache/sites-enabled:/etc/apache2/sites-enabled
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    depends_on:
+      - db
+    networks:
+      - xampp_network
+    restart: unless-stopped
+    command: >
+      bash -c "
+      docker-php-ext-install mysqli pdo pdo_mysql &&
+      a2enmod rewrite &&
+      apache2-foreground
+      "
+
+  # Banco de Dados MySQL/MariaDB
+  db:
+    image: mariadb:10.11
+    container_name: xampp_mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql  # Salva na pasta local
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpass
+    networks:
+      - xampp_network
+    restart: unless-stopped
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: xampp_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - db
+    networks:
+      - xampp_network
+    restart: unless-stopped
+
+  # Servidor de Email (MailHog para desenvolvimento)
+  #mailhog:
+  #  image: mailhog/mailhog:latest
+  #  container_name: xampp_mailhog
+  #  ports:
+  #    - "1025:1025"  # SMTP
+  #    - "8025:8025"  # Interface Web
+  #  networks:
+  #    - xampp_network
+  #  restart: unless-stopped
+
+networks:
+  xampp_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
