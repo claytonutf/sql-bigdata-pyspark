@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker - Containerização Moderna</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .docker-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .docker-logo svg {
+            width: 80px;
+            height: 80px;
+            fill: #2496ed;
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            opacity: 0.95;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .card h3 {
+            color: #764ba2;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .code-block code {
+            display: block;
+            line-height: 1.6;
+        }
+
+        .command {
+            color: #4ec9b0;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .comparison-table tr:hover {
+            background: #f0f0f0;
+        }
+
+        .architecture-diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .diagram-layer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin: 15px auto;
+            border-radius: 10px;
+            max-width: 600px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .diagram-layer:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        ul {
+            margin: 20px 0 20px 30px;
+        }
+
+        li {
+            margin: 10px 0;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="docker-logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338 0-.676.03-1.01.09-.248-1.827-1.66-2.66-1.762-2.728l-.353-.22-.23.353c-.296.466-.444.989-.43 1.52.012.428.06.85.216 1.21-1.441.78-3.026.582-3.114.575H.221l-.03.05c-.328.754-.498 1.574-.5 2.4-.002 2.87 1.294 4.49 2.692 5.46 1.19.824 2.544 1.24 3.916 1.24 4.758 0 8.295-2.21 9.988-6.24 1.104.024 2.084-.17 2.832-.63.39-.24.698-.54.93-.93l.099-.199-.243-.165z"/>
+                </svg>
+            </div>
+            <h1>Docker</h1>
+            <p class="tagline">Containerização Moderna para Desenvolvimento Ágil</p>
+            <p class="tagline"><b>Professor/Mentor: Clayton Kossoski</b></p>
+            <p class="tagline">UTFPR e Hub de IA do Senai — 2025</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('intro')">Introdução</button>
+            <button class="tab-btn" onclick="showTab('conceitos')">Conceitos</button>
+            <button class="tab-btn" onclick="showTab('comandos')">Comandos</button>
+            <button class="tab-btn" onclick="showTab('arquitetura')">Arquitetura</button>
+            <button class="tab-btn" onclick="showTab('vantagens')">Vantagens</button>
+        </div>
+
+        <div id="intro" class="content-section active">
+            <div class="card">
+                <h2>O que é Docker?</h2>
+                <p>Docker é uma plataforma de <span class="highlight">containerização</span> que permite empacotar aplicações e suas dependências em containers portáteis e isolados. Criado em 2013, revolucionou a forma como desenvolvemos, distribuímos e executamos aplicações.</p>
+                
+                <h3>Por que usar Docker?</h3>
+                <p>Docker resolve o clássico problema: <em>"Funciona na minha máquina!"</em>. Com containers, você garante que sua aplicação rodará da mesma forma em qualquer ambiente: desenvolvimento, teste ou produção.</p>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h4>Portabilidade</h4>
+                        <p>Execute em qualquer lugar que tenha Docker instalado</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Performance</h4>
+                        <p>Inicialização rápida e uso eficiente de recursos</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h4>Isolamento</h4>
+                        <p>Aplicações isoladas sem interferir umas nas outras</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h4>Consistência</h4>
+                        <p>Mesmo ambiente em dev, teste e produção</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="conceitos" class="content-section">
+            <div class="card">
+                <h2>Conceitos Fundamentais</h2>
+                
+                <h3>🐳 Container</h3>
+                <p>Um container é uma unidade padrão de software que empacota código e todas as suas dependências. É leve, standalone e executável. Pense nele como um "processo isolado" com seu próprio sistema de arquivos.</p>
+
+                <h3>📦 Imagem</h3>
+                <p>Uma imagem é um template imutável usado para criar containers. Contém tudo necessário para rodar uma aplicação: código, runtime, bibliotecas, variáveis de ambiente e arquivos de configuração.</p>
+
+                <h3>📝 Dockerfile</h3>
+                <p>Um arquivo de texto com instruções para construir uma imagem Docker. É a "receita" que define como sua aplicação será empacotada.</p>
+
+                <div class="code-block">
+                    <code><span class="comment"># Exemplo de Dockerfile</span><br/><br/>
+<span class="command">FROM</span> node:18-alpine<br/>
+<span class="command">WORKDIR</span> /app<br/>
+<span class="command">COPY</span> package*.json ./<br/>
+<span class="command">RUN</span> npm install<br/>
+<span class="command">COPY</span> . .<br/>
+<span class="command">EXPOSE</span> 3000<br/>
+<span class="command">CMD</span> ["node", "server.js"]</code>
+                </div>
+
+                <h3>🎯 Docker Hub</h3>
+                <p>Um registro público de imagens Docker. É como o "GitHub das imagens Docker", onde você pode encontrar milhares de imagens prontas para uso.</p>
+
+                <h3>🔗 Docker Compose</h3>
+                <p>Ferramenta para definir e executar aplicações multi-container. Com um único arquivo YAML, você configura todos os serviços da sua aplicação.</p>
+            </div>
+
+            <div class="card">
+                <h2>Docker vs Máquinas Virtuais</h2>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Docker Container</th>
+                            <th>Máquina Virtual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Tamanho</strong></td>
+                            <td>MBs (megabytes)</td>
+                            <td>GBs (gigabytes)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Inicialização</strong></td>
+                            <td>Segundos</td>
+                            <td>Minutos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Nativa (próxima ao host)</td>
+                            <td>Overhead de virtualização</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Isolamento</strong></td>
+                            <td>Nível de processo</td>
+                            <td>Nível de hardware</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sistema Operacional</strong></td>
+                            <td>Compartilha o kernel do host</td>
+                            <td>Possui SO completo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="comandos" class="content-section">
+            <div class="card">
+                <h2>Comandos Essenciais do Docker</h2>
+
+                <h3>🔍 Trabalhando com Imagens</h3>
+                <div class="code-block">
+                    <code><span class="comment"># Baixar uma imagem do Docker Hub</span><br/>
+docker pull nginx:latest<br/><br/>
+
+<span class="comment"># Listar imagens locais</span><br/>
+docker images<br/><br/>
+
+<span class="comment"># Construir imagem a partir de Dockerfile</span><br/>
+docker build -t meu-app:1.0 .<br/><br/>
+
+<span class="comment"># Remover uma imagem</span><br/>
+docker rmi nginx:latest</code>
+                </div>
+
+                <h3>🚀 Gerenciando Containers</h3>
+                <div class="code-block">
+                    <code><span class="comment"># Criar e iniciar um container</span><br/>
+docker run -d -p 8080:80 --name meu-nginx nginx<br/><br/>
+
+<span class="comment"># Listar containers em execução</span><br/>
+docker ps<br/><br/>
+
+<span class="comment"># Listar todos os containers (inclusive parados)</span><br/>
+docker ps -a<br/><br/>
+
+<span class="comment"># Parar um container</span><br/>
+docker stop meu-nginx<br/><br/>
+
+<span class="comment"># Iniciar um container parado</span><br/>
+docker start meu-nginx<br/><br/>
+
+<span class="comment"># Remover um container</span><br/>
+docker rm meu-nginx<br/><br/>
+
+<span class="comment"># Ver logs de um container</span><br/>
+docker logs meu-nginx<br/><br/>
+
+<span class="comment"># Executar comando dentro do container</span><br/>
+docker exec -it meu-nginx bash</code>
+                </div>
+
+                <h3>🧹 Limpeza e Manutenção</h3>
+                <div class="code-block">
+                    <code><span class="comment"># Remover containers parados</span><br/>
+docker container prune<br/><br/>
+
+<span class="comment"># Remover imagens não utilizadas</span><br/>
+docker image prune<br/><br/>
+
+<span class="comment"># Remover tudo não utilizado</span><br/>
+docker system prune -a<br/><br/>
+
+<span class="comment"># Ver uso de espaço</span><br/>
+docker system df</code>
+                </div>
+
+                <h3>🎼 Docker Compose</h3>
+                <div class="code-block">
+                    <code><span class="comment"># Iniciar todos os serviços</span><br/>
+docker-compose up -d<br/><br/>
+
+<span class="comment"># Parar todos os serviços</span><br/>
+docker-compose down<br/><br/>
+
+<span class="comment"># Ver logs</span><br/>
+docker-compose logs -f<br/><br/>
+
+<span class="comment"># Reconstruir e iniciar</span><br/>
+docker-compose up -d --build</code>
+                </div>
+            </div>
+        </div>
+
+        <div id="arquitetura" class="content-section">
+            <div class="card">
+                <h2>Arquitetura do Docker</h2>
+                <p>Docker utiliza uma arquitetura cliente-servidor. O Docker Client se comunica com o Docker Daemon, que faz o trabalho pesado de construir, executar e distribuir containers.</p>
+
+                <div class="architecture-diagram">
+                    <h3 style="color: #667eea; margin-bottom: 30px;">Camadas da Arquitetura</h3>
+                    
+                    <div class="diagram-layer">
+                        Docker Client (CLI)
+                    </div>
+                    <div style="font-size: 2em; margin: 10px; color: #667eea;">⬇️</div>
+                    
+                    <div class="diagram-layer">
+                        Docker Daemon (dockerd)
+                    </div>
+                    <div style="font-size: 2em; margin: 10px; color: #667eea;">⬇️</div>
+                    
+                    <div class="diagram-layer">
+                        Containers & Images
+                    </div>
+                    <div style="font-size: 2em; margin: 10px; color: #667eea;">⬇️</div>
+                    
+                    <div class="diagram-layer">
+                        Kernel do Sistema Operacional
+                    </div>
+                </div>
+
+                <h3>Componentes Principais</h3>
+                <ul>
+                    <li><strong>Docker Client:</strong> Interface de linha de comando (CLI) que permite interagir com o Docker</li>
+                    <li><strong>Docker Daemon:</strong> Serviço que gerencia objetos Docker (imagens, containers, redes, volumes)</li>
+                    <li><strong>Docker Registry:</strong> Armazena imagens Docker (Docker Hub é o registry público padrão)</li>
+                    <li><strong>Docker Objects:</strong> Imagens, containers, networks, volumes, plugins</li>
+                </ul>
+
+                <h3>Namespaces e Cgroups</h3>
+                <p>Docker usa tecnologias do kernel Linux para criar isolamento:</p>
+                <ul>
+                    <li><strong>Namespaces:</strong> Isolam recursos do sistema (PID, Network, Mount, UTS, IPC, User)</li>
+                    <li><strong>Cgroups:</strong> Limitam e monitoram uso de recursos (CPU, memória, I/O)</li>
+                    <li><strong>Union File Systems:</strong> Permitem camadas de arquivos sobrepostas</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="vantagens" class="content-section">
+            <div class="card">
+                <h2>Vantagens e Casos de Uso</h2>
+
+                <h3>✨ Principais Benefícios</h3>
+                <ul>
+                    <li><strong>Desenvolvimento Consistente:</strong> Elimina problemas de "funciona na minha máquina"</li>
+                    <li><strong>Deploys Rápidos:</strong> Containers iniciam em segundos</li>
+                    <li><strong>Escalabilidade:</strong> Facilita escalar aplicações horizontal e verticalmente</li>
+                    <li><strong>Eficiência de Recursos:</strong> Múltiplos containers no mesmo hardware</li>
+                    <li><strong>Versionamento:</strong> Imagens podem ser versionadas como código</li>
+                    <li><strong>Microserviços:</strong> Perfeito para arquiteturas distribuídas</li>
+                    <li><strong>CI/CD:</strong> Integra facilmente em pipelines de integração contínua</li>
+                </ul>
+
+                <h3>💼 Casos de Uso Reais</h3>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <h4>Aplicações Web</h4>
+                        <p>Deploy de sites, APIs e aplicações full-stack com facilidade</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🧪</div>
+                        <h4>Ambientes de Teste</h4>
+                        <p>Criar ambientes isolados para testes automatizados</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h4>Microserviços</h4>
+                        <p>Cada serviço em seu próprio container independente</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h4>Bancos de Dados</h4>
+                        <p>Rodar MySQL, PostgreSQL, MongoDB em containers</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h4>Machine Learning</h4>
+                        <p>Ambientes reproduzíveis para treinamento de modelos</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h4>Big Data</h4>
+                        <p>Processar grandes volumes de dados em containers escaláveis</p>
+                    </div>
+                </div>
+
+                <h3>🏢 Empresas que Usam Docker</h3>
+                <p>Docker é usado por milhões de desenvolvedores e milhares de empresas, incluindo:</p>
+                <ul>
+                    <li>Netflix - para gerenciar sua infraestrutura massiva</li>
+                    <li>Spotify - para deploy de microserviços</li>
+                    <li>Uber - para escalar aplicações globalmente</li>
+                    <li>PayPal - para modernizar aplicações legadas</li>
+                    <li>Alibaba - para computação em nuvem</li>
+                </ul>
+
+                <h3>🎯 Quando NÃO usar Docker?</h3>
+                <ul>
+                    <li>Aplicações com GUI desktop complexas</li>
+                    <li>Quando você precisa de segurança máxima a nível de hardware</li>
+                    <li>Aplicações que dependem fortemente de kernel específico</li>
+                    <li>Quando a simplicidade de uma VM tradicional é suficiente</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🚀 Primeiros Passos</h2>
+                <p>Pronto para começar com Docker? Siga estes passos:</p>
+                
+                <ol style="margin-left: 30px; margin-top: 20px;">
+                    <li style="margin: 15px 0;">Instale o Docker Desktop para seu sistema operacional</li>
+                    <li style="margin: 15px 0;">Execute <code style="background: #f0f0f0; padding: 5px 10px; border-radius: 5px;">docker run hello-world</code> para verificar a instalação</li>
+                    <li style="margin: 15px 0;">Explore imagens no Docker Hub</li>
+                    <li style="margin: 15px 0;">Crie seu primeiro Dockerfile</li>
+                    <li style="margin: 15px 0;">Construa e execute sua aplicação em um container</li>
+                    <li style="margin: 15px 0;">Aprenda Docker Compose para aplicações multi-container</li>
+                </ol>
+
+                <p style="margin-top: 30px; font-size: 1.2em; text-align: center; color: #667eea;"><strong>Docker transforma a forma como desenvolvemos e entregamos software! 🐳</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Esconder todas as seções
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remover classe active de todos os botões
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar a seção selecionada
+            document.getElementById(tabName).classList.add('active');
+
+            // Adicionar classe active ao botão clicado
+            event.target.classList.add('active');
+
+            // Scroll suave para o topo
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Adicionar efeito de parallax no scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const header = document.querySelector('.header');
+            if (header) {
+                header.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
