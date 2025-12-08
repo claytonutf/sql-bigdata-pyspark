@@ -28,3 +28,10 @@ Este repositório contém exemplos e notebooks para trabalhar com **SQL** usando
 ```bash
 git clone https://github.com/claytonutf/sql-bigdata-pyspark.git
 cd sql-bigdata-pyspark
+```
+
+## Melhores Fontes de Referência e Tutoriais
+
+1. **SQL** — [SQL Tutorial](https://www.sqltutorial.org/)
+2. **PySpark** — [Spark by Examples](https://sparkbyexamples.com/pyspark-tutorial/)
+3. **Spark** - **Spark** — *Spark: The Definitive Guide: Big Data Processing Made Simple*
