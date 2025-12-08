@@ -34,4 +34,4 @@ cd sql-bigdata-pyspark
 
 1. **SQL** — [SQL Tutorial](https://www.sqltutorial.org/)
 2. **PySpark** — [Spark by Examples](https://sparkbyexamples.com/pyspark-tutorial/)
-3. **Spark** - **Spark** — *Spark: The Definitive Guide: Big Data Processing Made Simple*
+3. **Spark** — *Spark: The Definitive Guide: Big Data Processing Made Simple*
